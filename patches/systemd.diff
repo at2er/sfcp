@@ -1,0 +1,78 @@
+From b2f55d8ce5834e67ecf4f83499bbe842d17d54b6 Mon Sep 17 00:00:00 2001
+From: at2er <xb0515@outlook.com>
+Date: Thu, 7 Aug 2025 10:16:17 +0800
+Subject: [PATCH] feat: systemd service config
+
+---
+ Makefile                                       | 18 ++++++++++++------
+ ...reedesktop.impl.portal.desktop.sfcp.service |  4 ++++
+ sfcp.service                                   |  9 +++++++++
+ 3 files changed, 25 insertions(+), 6 deletions(-)
+ create mode 100644 org.freedesktop.impl.portal.desktop.sfcp.service
+ create mode 100644 sfcp.service
+
+diff --git a/Makefile b/Makefile
+index 3d2cac4..d1708b7 100644
+--- a/Makefile
++++ b/Makefile
+@@ -3,7 +3,9 @@ AR = ar
+ PKG_CONFIG = pkg-config
+ PREFIX = /usr/local
+ 
++DBUS_SERVICE = org.freedesktop.impl.portal.desktop.sfcp.service
+ PORTAL = sfcp.portal
++SERVICE = sfcp.service
+ TARGET = sfcp
+ WRAP = wrap-sfcp-fm
+ 
+@@ -32,12 +34,16 @@ clean:
+ 	rm -f $(OBJ) $(TARGET)
+ 
+ install: all
+-	mkdir -p $(PREFIX)/share/xdg-desktop-portal/portals
++	mkdir -p $(PREFIX)/share/xdg-desktop-portal/portals \
++		$(PREFIX)/share/dbus-1/services \
++		$(PREFIX)/lib $(PREFIX)/lib/systemd/user \
++	cp -f $(DBUS_SERVICE) $(PREFIX)/share/dbus-1/services/$(DBUS_SERVICE)
+ 	cp -f $(PORTAL) $(PREFIX)/share/xdg-desktop-portal/portals/$(PORTAL)
+-	cp -f $(TARGET) $(PREFIX)/bin/$(TARGET)
+-	cp -f $(WRAP) $(PREFIX)/bin/$(WRAP)
++	cp -f $(SERVICE) $(PREFIX)/lib/systemd/user/$(SERVICE)
++	cp -f $(TARGET) $(PREFIX)/lib/$(TARGET)
+ 
+ uninstall:
+-	rm -f $(PREFIX)/share/xdg-desktop-portal/portals/$(PORTAL) \
+-		$(PREFIX)/bin/$(TARGET) \
+-		$(PREFIX)/bin/$(WRAP)
++	rm -f $(PREFIX)/share/dbus-1/services/$(DBUS_SERVICE) \
++		$(PREFIX)/share/xdg-desktop-portal/portals/$(PORTAL) \
++		$(PREFIX)/lib/systemd/user/$(SERVICE) \
++		$(PREFIX)/lib/$(TARGET)
+diff --git a/org.freedesktop.impl.portal.desktop.sfcp.service b/org.freedesktop.impl.portal.desktop.sfcp.service
+new file mode 100644
+index 0000000..ee65119
+--- /dev/null
++++ b/org.freedesktop.impl.portal.desktop.sfcp.service
+@@ -0,0 +1,4 @@
++[D-BUS Service]
++Name=org.freedesktop.impl.portal.desktop.sfcp
++Exec=/usr/local/bin/sfcp
++SystemdService=sfcp.service
+diff --git a/sfcp.service b/sfcp.service
+new file mode 100644
+index 0000000..c75a17c
+--- /dev/null
++++ b/sfcp.service
+@@ -0,0 +1,9 @@
++[Unit]
++Description=Simple File Chooser Portal service (sfcp)
++PartOf=graphical-session.target
++After=graphical-session.target
++
++[Service]
++Type=dbus
++BusName=org.freedesktop.impl.portal.desktop.sfcp
++ExecStart=/usr/local/bin/sfcp
+-- 
+2.50.1
+
