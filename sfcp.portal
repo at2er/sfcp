@@ -1,0 +1,4 @@
+[portal]
+DBusName=org.freedesktop.impl.portal.desktop.sfcp
+Interfaces=org.freedesktop.impl.portal.FileChooser
+UseIn=i3;wlroots;Hyprland;sway;Wayfire;river;mate;lxde;openbox;unity;pantheon

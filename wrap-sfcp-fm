@@ -1,0 +1,34 @@
+#!/bin/sh
+
+class="-a sfcp-filechooser"
+
+mode="$1"
+output="$2"
+
+case "$mode" in
+	open)
+		multiple=$3
+		directory=$4
+		path="$5"
+
+		dironly="false"
+		single=""
+
+		[ -n "$directory" ] && [ $directory = "1" ] && dironly="true"
+		[ -n "$multiple" ] && [ $multiple = "1" ] && single="-single"
+
+		$TERMINAL $class -e lf \
+			$single \
+			-config <(cat $XDG_CONFIG_HOME/lf/lfrc; \
+				printf 'set %s;' "dironly $dironly") \
+			-selection-path "$output"
+		;;
+	save)
+		multiple=$3
+		name="$(printf '%s' "$4" | sed 's/\\/\\\\/g;s/"/\\"/g;s/ /<space>/g')"
+		$TERMINAL $class -e lf \
+			-command ":push \$touch<space>\"$name\"" \
+			-selection-path "$output"
+		;;
+esac
+
