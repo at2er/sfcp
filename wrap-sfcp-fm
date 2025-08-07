@@ -1,6 +1,8 @@
 #!/bin/sh
 
-class="-a sfcp-filechooser"
+envfc="sfcp-filechooser"
+
+class="-a $envfc"
 
 mode="$1"
 output="$2"
@@ -17,18 +19,21 @@ case "$mode" in
 		[ -n "$directory" ] && [ $directory = "1" ] && dironly="true"
 		[ -n "$multiple" ] && [ $multiple = "1" ] && single="-single"
 
+		export lf_flag_selection_path="$output"
+
 		$TERMINAL $class -e lf \
 			$single \
-			-config <(cat $XDG_CONFIG_HOME/lf/lfrc; \
-				printf 'set %s;' "dironly $dironly") \
+			-command "$(printf 'set %s;' "dironly $dironly")" \
 			-selection-path "$output"
 		;;
 	save)
 		multiple=$3
 		name="$(printf '%s' "$4" | sed 's/\\/\\\\/g;s/"/\\"/g;s/ /<space>/g')"
+
+		export lf_flag_selection_path="$output"
+
 		$TERMINAL $class -e lf \
 			-command ":push \$touch<space>\"$name\"" \
 			-selection-path "$output"
 		;;
 esac
-

@@ -16,11 +16,6 @@
 #define TMPLEN 64
 #define URIPREFIX "file://"
 
-enum {
-	FlagMultiple  = 1,
-	FlagDirectory = 1 << 1,
-};
-
 static const char *iface = "org.freedesktop.impl.portal.FileChooser";
 static const unsigned int tmpidmax = 1000;
 

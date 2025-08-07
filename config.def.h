@@ -13,9 +13,3 @@
  *   $4 string?: default name.
  */
 static const char wrap[] = "wrap-sfcp-fm";
-
-#if defined (__linux__)
-#include <linux/limits.h>
-#else
-#define PATH_MAX 4096
-#endif
